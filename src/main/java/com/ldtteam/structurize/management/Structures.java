@@ -130,7 +130,7 @@ public final class Structures
             for (final Map.Entry<String, ModFileInfo> origin : StructureLoadingUtils.getOriginMods().entrySet())
             {
                 final Path path = origin.getValue().getFile().getLocator().findPath(origin.getValue().getFile(), SCHEMATICS_ASSET_PATH, origin.getKey());
-                Log.getLogger().warn("Trying jar discover: {}", path.toString());
+                Log.getLogger().info("Trying jar discover: {}", path.toString());
                 loadSchematicsForPrefix(path, SCHEMATICS_PREFIX);
             }
         }
@@ -215,18 +215,23 @@ public final class Structures
             while (it.hasNext())
             {
                 final Path path = it.next();
+                Log.getLogger().warn("Orig: {}", path.toString());
                 if (path.toString().endsWith(SCHEMATIC_EXTENSION_NEW))
                 {
                     String relativePath = basePath.relativize(path).toString();
+                    Log.getLogger().warn("Prefix: {}", relativePath);
                     relativePath = relativePath.substring(0, relativePath.length() - SCHEMATIC_EXTENSION_NEW.length());
+                    Log.getLogger().warn("Interfix 1: {}", relativePath);
                     if (!SCHEMATICS_SEPARATOR.equals(path.getFileSystem().getSeparator()))
                     {
                         relativePath = relativePath.replace(path.getFileSystem().getSeparator(), SCHEMATICS_SEPARATOR);
                     }
+                    Log.getLogger().warn("Interfix 2: {}", relativePath);
                     if (relativePath.startsWith(SCHEMATICS_SEPARATOR))
                     {
                         relativePath = relativePath.substring(1);
                     }
+                    Log.getLogger().warn("Postfix: {}", relativePath);
 
                     try
                     {
@@ -234,6 +239,7 @@ public final class Structures
                         fileMap.put(structureName.toString(), SCHEMATIC_EXTENSION_NEW);
                         final byte[] structureFileBytes = StructureLoadingUtils.getByteArray(relativePath);
                         final String md5 = StructureUtils.calculateMD5(structureFileBytes);
+                        Log.getLogger().warn("SN: {}, MD5: {}", structureName.toString(), Objects.toString(md5));
                         if (md5 == null)
                         {
                             fileMap.remove(structureName.toString());
